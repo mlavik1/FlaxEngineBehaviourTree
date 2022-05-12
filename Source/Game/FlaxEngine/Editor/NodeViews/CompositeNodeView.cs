@@ -39,7 +39,7 @@ namespace BehaviourTree
             foreach (DecoratorNode decoratorNode in composite.decorators)
             {
                 Decorator decorator = decoratorNode.decorator;
-                string[] decoratorProps = decorator.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Select(f => $"{f.Name} = {f.GetValue(decorator).ToString()}").ToArray();
+                string[] decoratorProps = decorator.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Select(f => $"{f.Name} = {f.GetValue(decorator)?.ToString()}").ToArray();
                 
                 VerticalPanel decoratorControl = nodeRoot.AddChild<VerticalPanel>();
                 decoratorControl.BackgroundColor = Color.Blue;

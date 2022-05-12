@@ -28,10 +28,11 @@ namespace BehaviourTree
                 {
                     Decorator decorator = decoratorNode.decorator;
                     FieldInfo[] fields = decorator.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public);
+                    Debug.Log(fields.Length);
                     foreach (FieldInfo field in fields)
                     {
                         object fieldValue = field.GetValue(decorator);
-                        ScriptType scriptType = TypeUtils.GetObjectType(fieldValue);
+                        ScriptType scriptType = TypeUtils.GetType(field.FieldType.FullName);
                         CustomValueContainer.GetDelegate fieldGetter = (instance, index) => { return field.GetValue(decorator); };
                         CustomValueContainer.SetDelegate fieldSetter = (instance, index, value) =>
                         {
@@ -54,7 +55,7 @@ namespace BehaviourTree
                 foreach (FieldInfo field in fields)
                 {
                     object fieldValue = field.GetValue(task);
-                    ScriptType scriptType = TypeUtils.GetObjectType(fieldValue);
+                    ScriptType scriptType = TypeUtils.GetType(field.FieldType.FullName);
                     CustomValueContainer.GetDelegate fieldGetter = (instance, index) => { return field.GetValue(task); };
                     CustomValueContainer.SetDelegate fieldSetter = (instance, index, value) =>
                     {

@@ -17,19 +17,19 @@ namespace BehaviourTree
             throw new InvalidOperationException("Cannot add child to task node.");
         }
 
-        public override NodeExecutionResult Execute()
+        public override NodeExecutionResult Execute(IBehaviourTreeAgent agent)
         {
             if (!isRunning)
-                task.Start();
+                task.Start(agent);
 
-            NodeExecutionResult result = task.Update();
+            NodeExecutionResult result = task.Update(agent);
             isRunning = result == NodeExecutionResult.InProgress;
             return result;
         }
 
-        public override void OnAbort()
+        public override void OnAbort(IBehaviourTreeAgent agent)
         {
-            task.OnAbort();
+            task.OnAbort(agent);
             isRunning = false;
         }
 

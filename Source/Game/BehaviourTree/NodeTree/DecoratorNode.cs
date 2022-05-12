@@ -10,14 +10,14 @@
             decorator = decor;
         }
 
-        public bool Execute()
+        public bool Execute(IBehaviourTreeAgent agent)
         {
-            return decorator.ExecuteCondition() != decorator.InverseCondition;
+            return decorator.ExecuteCondition(agent) != decorator.InverseCondition;
         }
 
-        public void OverridResult(ref NodeExecutionResult result)
+        public void OverridResult(IBehaviourTreeAgent agent, ref NodeExecutionResult result)
         {
-            decorator.OverridResult(ref result);
+            decorator.OverridResult(agent, ref result);
         }
 
         public string GetName()

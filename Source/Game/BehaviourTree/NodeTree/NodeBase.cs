@@ -10,9 +10,9 @@ namespace BehaviourTree
         protected NodeBase parent;
         protected List<NodeBase> children = new List<NodeBase>();
 
-        public abstract NodeExecutionResult Execute();
+        public abstract NodeExecutionResult Execute(IBehaviourTreeAgent agent);
 
-        public abstract void OnAbort();
+        public abstract void OnAbort(IBehaviourTreeAgent agent);
 
         public abstract void AddChild(NodeBase newChild);
 

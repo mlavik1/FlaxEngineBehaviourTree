@@ -9,9 +9,9 @@
             rootNode = node;
         }
 
-        public void Update()
+        public void Update(IBehaviourTreeAgent agent)
         {
-            rootNode.Execute();
+            rootNode.Execute(agent);
         }
 
         public NodeBase GetRootNode()

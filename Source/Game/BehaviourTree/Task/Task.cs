@@ -5,8 +5,8 @@
     /// </summary>
     public abstract class Task
     {
-        public abstract void Start();
-        public abstract NodeExecutionResult Update();
-        public abstract void OnAbort();
+        public abstract void Start(IBehaviourTreeAgent agent);
+        public abstract NodeExecutionResult Update(IBehaviourTreeAgent agent);
+        public abstract void OnAbort(IBehaviourTreeAgent agent);
     }
 }

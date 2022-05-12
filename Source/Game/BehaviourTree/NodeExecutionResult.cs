@@ -3,7 +3,7 @@
     public enum NodeExecutionResult
     {
         Succeeded,
-        Faied,
+        Failed,
         Aborted,
         InProgress
     }

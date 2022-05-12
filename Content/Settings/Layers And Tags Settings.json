@@ -5,7 +5,9 @@
 	"Data": {
 	"Tags": [
 		"Player",
-		"Bullet"
+		"Bullet",
+		"Predator",
+		"Prey"
 	],
 	"Layers": [
 		"Default",

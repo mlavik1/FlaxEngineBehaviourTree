@@ -59,30 +59,6 @@
 			"CustomTexture": "c54410104ff39427bc11e5bc761d66b0"
 		},
 		{
-			"ID": "6ef847a14f128748b9e2428a453f0651",
-			"TypeName": "FlaxEngine.StaticModel",
-			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
-			"Name": "Floor",
-			"Transform": {
-				"Scale": {
-					"X": 4.0,
-					"Y": 0.5,
-					"Z": 4.0
-				}
-			},
-			"Model": "b43f0f8f4aaba3f3156896a5a22ba493",
-			"Buffer": {
-				"Entries": [
-					{
-						"Material": "1771b53343d461faacdf2c8581b1fdbb",
-						"ShadowsMode": 3,
-						"Visible": true,
-						"ReceiveDecals": true
-					}
-				]
-			}
-		},
-		{
 			"ID": "b32232a54ed068aa02453581d0dd979e",
 			"TypeName": "FlaxEngine.Camera",
 			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
@@ -96,16 +72,186 @@
 			}
 		},
 		{
-			"ID": "d06d2fd64ad87d70902c55a282caa7f8",
-			"TypeName": "FlaxEngine.EmptyActor",
+			"ID": "6036126a474671e33ceafc8db62b5ec1",
+			"TypeName": "FlaxEngine.StaticModel",
 			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
-			"Name": "AITest"
+			"IsActive": false,
+			"Name": "Predator",
+			"Transform": {
+				"Translation": {
+					"X": -310.6219482421875,
+					"Y": 0.0,
+					"Z": 602.7874145507813
+				}
+			},
+			"Tag": "Predator",
+			"Model": "3f82e57744f57c28285150b646ad2198",
+			"Buffer": {
+				"Entries": [
+					{
+						"Material": "00000000000000000000000000000000",
+						"ShadowsMode": 3,
+						"Visible": true,
+						"ReceiveDecals": true
+					}
+				]
+			}
 		},
 		{
-			"ID": "3031b7184c2aa33eed5719b400a89fa7",
+			"ID": "a249addc49d77e14d46b61bc964dd6df",
 			"TypeName": "BehaviourTree.AIController",
-			"ParentID": "d06d2fd64ad87d70902c55a282caa7f8",
-			"V": {}
+			"ParentID": "6036126a474671e33ceafc8db62b5ec1",
+			"V": {
+	"behaviourTreeFilePath": "D:\\\\test.xml"
+}
+		},
+		{
+			"ID": "226115b747300c74b1ca1a971c47a307",
+			"TypeName": "FlaxEngine.StaticModel",
+			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
+			"Name": "Predator",
+			"Transform": {
+				"Translation": {
+					"X": 356.1148986816406,
+					"Y": 0.0,
+					"Z": 95.2435302734375
+				}
+			},
+			"Tag": "Predator",
+			"Model": "3f82e57744f57c28285150b646ad2198",
+			"Buffer": {
+				"Entries": [
+					{
+						"Material": "00000000000000000000000000000000",
+						"ShadowsMode": 3,
+						"Visible": true,
+						"ReceiveDecals": true
+					}
+				]
+			}
+		},
+		{
+			"ID": "0c4b2c9d47edd6a4de5b2f9716961b65",
+			"TypeName": "BehaviourTree.AIController",
+			"ParentID": "226115b747300c74b1ca1a971c47a307",
+			"V": {
+	"behaviourTreeFilePath": "D:\\\\test.xml"
+}
+		},
+		{
+			"ID": "8322b22e4e1ee70ffcd668ad221bf8b2",
+			"TypeName": "FlaxEngine.StaticModel",
+			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
+			"Name": "Prey",
+			"Transform": {
+				"Translation": {
+					"X": -224.05361938476563,
+					"Y": 0.0,
+					"Z": 294.5093994140625
+				},
+				"Scale": {
+					"X": 0.5,
+					"Y": 0.5,
+					"Z": 0.5
+				}
+			},
+			"Tag": "Prey",
+			"Model": "dd86c4724bf734c4959d23b3c74faa05",
+			"Buffer": {
+				"Entries": [
+					{
+						"Material": "00000000000000000000000000000000",
+						"ShadowsMode": 3,
+						"Visible": true,
+						"ReceiveDecals": true
+					}
+				]
+			}
+		},
+		{
+			"ID": "1756cf134d72fcdcade59789994a1b69",
+			"TypeName": "FlaxEngine.StaticModel",
+			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
+			"Name": "Prey",
+			"Transform": {
+				"Scale": {
+					"X": 0.5,
+					"Y": 0.5,
+					"Z": 0.5
+				}
+			},
+			"Tag": "Prey",
+			"Model": "dd86c4724bf734c4959d23b3c74faa05",
+			"Buffer": {
+				"Entries": [
+					{
+						"Material": "00000000000000000000000000000000",
+						"ShadowsMode": 3,
+						"Visible": true,
+						"ReceiveDecals": true
+					}
+				]
+			}
+		},
+		{
+			"ID": "d07a57e94dd293feed702db633a0c178",
+			"TypeName": "FlaxEngine.StaticModel",
+			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
+			"Name": "Prey",
+			"Transform": {
+				"Translation": {
+					"X": 120.2015609741211,
+					"Y": 0.0,
+					"Z": 135.30628967285157
+				},
+				"Scale": {
+					"X": 0.5,
+					"Y": 0.5,
+					"Z": 0.5
+				}
+			},
+			"Tag": "Prey",
+			"Model": "dd86c4724bf734c4959d23b3c74faa05",
+			"Buffer": {
+				"Entries": [
+					{
+						"Material": "00000000000000000000000000000000",
+						"ShadowsMode": 3,
+						"Visible": true,
+						"ReceiveDecals": true
+					}
+				]
+			}
+		},
+		{
+			"ID": "7e5faba242557f73c28e9080a2aa3c4d",
+			"TypeName": "FlaxEngine.StaticModel",
+			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
+			"Name": "Prey",
+			"Transform": {
+				"Translation": {
+					"X": 171.06187438964845,
+					"Y": 0.0,
+					"Z": 638.5099487304688
+				},
+				"Scale": {
+					"X": 0.5,
+					"Y": 0.5,
+					"Z": 0.5
+				}
+			},
+			"Tag": "Prey",
+			"Model": "dd86c4724bf734c4959d23b3c74faa05",
+			"Buffer": {
+				"Entries": [
+					{
+						"Material": "00000000000000000000000000000000",
+						"ShadowsMode": 3,
+						"Visible": true,
+						"ReceiveDecals": true
+					}
+				]
+			}
 		}
 	]
 }

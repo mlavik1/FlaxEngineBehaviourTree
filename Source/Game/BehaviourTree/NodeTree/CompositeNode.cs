@@ -25,10 +25,10 @@ namespace BehaviourTree
             children.Add(newChild);
         }
 
-        public override NodeExecutionResult Execute()
+        public override NodeExecutionResult Execute(IBehaviourTreeAgent agent)
         {
             if (children.Count == 0)
-                return NodeExecutionResult.Faied;
+                return NodeExecutionResult.Failed;
 
             if (currentChildIndex == -1)
                 currentChildIndex = 0;
@@ -39,7 +39,7 @@ namespace BehaviourTree
             bool decoratorsSucceeded = true;
             foreach (DecoratorNode decorator in decorators)
             {
-                decoratorsSucceeded &= decorator.Execute();
+                decoratorsSucceeded &= decorator.Execute(agent);
                 if (!decoratorsSucceeded)
                     break;
             }
@@ -49,7 +49,7 @@ namespace BehaviourTree
             {
                 if (currentChildIndex != -1)
                 {
-                    currNode.OnAbort();
+                    currNode.OnAbort(agent);
                     currentChildIndex = -1;
                 }
                 return NodeExecutionResult.Aborted;
@@ -57,7 +57,7 @@ namespace BehaviourTree
             // Decorators succeeded => execute
             else
             {
-                NodeExecutionResult childResult = currNode.Execute();
+                NodeExecutionResult childResult = currNode.Execute(agent);
 
                 NodeExecutionResult result = GetResponseResultFromChild(childResult);
 
@@ -69,12 +69,12 @@ namespace BehaviourTree
                 // Allow decorators to override result
                 foreach (DecoratorNode decorator in decorators)
                 {
-                    decorator.OverridResult(ref result);
+                    decorator.OverridResult(agent, ref result);
                 }
 
                 // Handle overridden result
                 if (result == NodeExecutionResult.Aborted)
-                    currNode.OnAbort();
+                    currNode.OnAbort(agent);
                 else if (result != NodeExecutionResult.InProgress)
                     currentChildIndex = -1;
 
@@ -82,11 +82,11 @@ namespace BehaviourTree
             }
         }
 
-        public override void OnAbort()
+        public override void OnAbort(IBehaviourTreeAgent agent)
         {
             if (currentChildIndex != -1)
             {
-                children[currentChildIndex].OnAbort();
+                children[currentChildIndex].OnAbort(agent);
                 currentChildIndex = -1;
             }
         }
@@ -114,15 +114,15 @@ namespace BehaviourTree
                             return NodeExecutionResult.Succeeded;
                         }
                     }
-                case NodeExecutionResult.Faied:
+                case NodeExecutionResult.Failed:
                     {
                         if (type == CompositeType.Sequence)
                         {
-                            return NodeExecutionResult.Faied;
+                            return NodeExecutionResult.Failed;
                         }
                         else
                         {
-                            return currentChildIndex == children.Count - 1 ? NodeExecutionResult.Faied : NodeExecutionResult.InProgress;
+                            return currentChildIndex == children.Count - 1 ? NodeExecutionResult.Failed : NodeExecutionResult.InProgress;
                         }
                     }
                 default:
