@@ -3,7 +3,6 @@ using FlaxEditor;
 using FlaxEditor.CustomEditors;
 using FlaxEditor.GUI;
 using FlaxEditor.GUI.ContextMenu;
-using FlaxEditor.Scripting;
 using FlaxEditor.Windows;
 using FlaxEngine;
 using FlaxEngine.GUI;
@@ -27,7 +26,6 @@ namespace BehaviourTree
         private NodeViewBase selectedNode;
         private RootNodeView rootNodeView;
         private List<NodeViewBase> nodes = new List<NodeViewBase>();
-        //private BehaviourTree behaviourTree; // REMOVE ME (For test)
 
         public BehaviourTreeEditorWindow(Editor editor)
         : base(editor, true, ScrollBars.None)
@@ -46,6 +44,7 @@ namespace BehaviourTree
             {
                 AnchorPreset = AnchorPresets.StretchAll,
                 SplitterValue = 0.7f,
+                Y = toolStrip.Height,
                 Parent = this
             };
             canvasControl = splitPanel.Panel1;
@@ -54,14 +53,15 @@ namespace BehaviourTree
             propertiesEditor.Features = FeatureFlags.None;
             propertiesEditor.Panel.Parent = splitPanel.Panel2;
             propertiesEditor.Modified += OnPropertyEdited;
-
-            rootNodeView = new RootNodeView(canvasControl);
-            nodes.Add(rootNodeView);
         }
 
         public override void Update(float deltaTime)
         {
             base.Update(deltaTime);
+
+            // Create root node view. Can't do this in constructor
+            if (rootNodeView == null)
+                ClearNodeViews();
 
             Vector2 mousePos = canvasControl.PointFromScreen(Input.Mouse.Position);
 
@@ -89,7 +89,7 @@ namespace BehaviourTree
                 movingNode = null;
             }
 
-            // MouseHold => Move selected node
+            // Mouse click and drag => Move selected node
             if (movingNode != null && Input.GetMouseButton(MouseButton.Left))
             {
                 movingNode.GetControl().Location = mousePos - mousePosRelToNode;
@@ -97,25 +97,35 @@ namespace BehaviourTree
                 movingNode.parent?.UpdateConnectors();
             }
 
+            // Drag view
+            if (Input.GetMouseButton(MouseButton.Right) && Input.MousePositionDelta != Vector2.Zero)
+            {
+                // This is a bit hacky. Instead of moving all the nodes, we should move their parent.
+                foreach (NodeViewBase nodeVIew in nodes)
+                {
+                    nodeVIew.GetControl().Location += Input.MousePositionDelta;
+                    nodeVIew.UpdateConnectors();
+                    nodeVIew.parent?.UpdateConnectors();
+                }
+            }
+
+            if (Input.MouseScrollDelta != 0.0f)
+            {
+                canvasControl.Size += Vector2.One * Input.MouseScrollDelta;
+            }
+
             if (Input.GetKeyDown(KeyboardKeys.Delete) && selectedNode != null)
             {
                 DeleteNode(selectedNode);
             }
-
-            //if (behaviourTree != null)
-            //{
-            //    behaviourTree.Update(); // Test
-            //}
         }
 
         private void OnUndoRedo(IUndoAction action)
         {
-
         }
 
         private void OnPropertyEdited()
         {
-
         }
 
         private NodeViewBase GetNodeAtLocation(Vector2 mousePos)
@@ -274,16 +284,27 @@ namespace BehaviourTree
             {
                 BehaviourTreeReader treeReader = new BehaviourTreeReader();
                 BehaviourTree behaviourTree = treeReader.ReadXml(filenames[0]);
-                rootNodeView = null;
-                foreach (NodeViewBase nodeView in nodes)
-                    nodeView.GetControl().Dispose();
-                nodes.Clear();
-                rootNodeView = new RootNodeView(canvasControl);
+                ClearNodeViews();
                 CreateNodeView(behaviourTree.GetRootNode(), rootNodeView);
             }
         }
 
-        private void CreateNodeView(NodeBase node, NodeViewBase parent)
+        private void ClearNodeViews()
+        {
+            if (rootNodeView != null)
+            {
+                foreach (NodeViewBase nodeView in nodes)
+                    nodeView.DisposeContent();
+                rootNodeView = null;
+                nodes.Clear();
+            }
+            rootNodeView = new RootNodeView(canvasControl);
+            ContainerControl rootNodeControl = rootNodeView.GetControl();
+            rootNodeControl.LocalLocation = new Vector2(rootNodeControl.Parent.Width / 2, rootNodeControl.Parent.Height * 0.1f);
+            nodes.Add(rootNodeView);
+        }
+
+        private void CreateNodeView(NodeBase node, NodeViewBase parent, int siblingIndex = 0, int numSiblings = 1)
         {
             NodeViewBase nodeView = null;
             if (node.GetType() == typeof(CompositeNode))
@@ -296,13 +317,20 @@ namespace BehaviourTree
             nodes.Add(nodeView);
             parent.children.Add(nodeView);
             nodeView.parent = parent;
+
+            float cellWidth = parent.GetControl().Width * 1.2f;
+            nodeView.GetControl().Location = parent.GetControl().Location + new Vector2(cellWidth * siblingIndex - cellWidth * (numSiblings - 1) / 2, parent.GetControl().Height + 50.0f);
+
+            var childNodes = node.GetChildren();
+            int iChild = 0;
+            foreach (NodeBase childNode in node.GetChildren())
+            {
+                CreateNodeView(childNode, nodeView, iChild, childNodes.Count);
+                iChild++;
+            }
+
             nodeView.UpdateConnectors();
             parent.UpdateConnectors();
-
-            nodeView.GetControl().Location = parent.GetControl().Location + new Vector2(0.0f, parent.GetControl().Height + 50.0f);
-
-            foreach (NodeBase childNode in node.GetChildren())
-                CreateNodeView(childNode, nodeView);
         }
     }
 }

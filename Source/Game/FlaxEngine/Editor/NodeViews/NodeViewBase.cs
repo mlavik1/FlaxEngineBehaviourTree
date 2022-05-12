@@ -17,6 +17,13 @@ namespace BehaviourTree
         public abstract void SetHighlighted(bool highlight);
         public abstract void RebuildGUI();
 
+        public void DisposeContent()
+        {
+            GetControl().Dispose();
+            connectorPanels.ForEach(c => c.Dispose());
+            connectorPanels.Clear();
+        }
+
         public void UnlinkNode()
         {
             GetNode().UnlinkNode();

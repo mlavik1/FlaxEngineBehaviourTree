@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace BehaviourTree
 {
@@ -14,7 +15,9 @@ namespace BehaviourTree
             settings.Indent = true;
 
             StringBuilder stringBuilder = new StringBuilder();
-            System.Xml.XmlWriter writer = XmlWriter.Create(stringBuilder, settings);
+            XmlStringWriter stringWriter = new XmlStringWriter(stringBuilder, Encoding.UTF8); 
+
+            System.Xml.XmlWriter writer = XmlWriter.Create(stringWriter, settings);
             
             writer.WriteStartDocument();
             writer.WriteStartElement("Tree");
@@ -57,13 +60,9 @@ namespace BehaviourTree
             Type taskType = task.GetType();
             writer.WriteStartElement("Task");
             writer.WriteAttributeString("class", taskType.FullName);
-
+            
             FieldInfo[] fields = taskType.GetFields(BindingFlags.Instance | BindingFlags.Public);
-            foreach (FieldInfo field in fields)
-            {
-                object fieldValue = field.GetValue(task);
-                writer.WriteAttributeString(field.Name, fieldValue.ToString());
-            }
+            WriteFields(task, writer);
             WriteChildNodes(node, writer);
             writer.WriteEndElement();
         }
@@ -74,12 +73,23 @@ namespace BehaviourTree
             Type decoratorType = decorator.GetType();
             writer.WriteStartElement("Decorator");
             writer.WriteAttributeString("class", decoratorType.FullName);
+            WriteFields(decorator, writer);
+            writer.WriteEndElement();
+        }
 
-            FieldInfo[] fields = decoratorType.GetFields(BindingFlags.Instance | BindingFlags.Public);
+        private void WriteFields(object obj, XmlWriter writer)
+        {
+            writer.WriteStartElement("Fields");
+            var ns = new XmlSerializerNamespaces();
+            ns.Add("", "");
+            FieldInfo[] fields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public);
             foreach (FieldInfo field in fields)
             {
-                object fieldValue = field.GetValue(decorator);
-                writer.WriteAttributeString(field.Name, fieldValue.ToString());
+                writer.WriteStartElement(field.Name);
+                XmlSerializer serializer = new XmlSerializer(field.FieldType);
+                object fieldValue = field.GetValue(obj);
+                serializer.Serialize(writer, fieldValue, ns);
+                writer.WriteEndElement();
             }
             writer.WriteEndElement();
         }

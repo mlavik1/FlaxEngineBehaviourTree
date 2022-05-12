@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Linq;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace BehaviourTree
 {
@@ -52,6 +54,7 @@ namespace BehaviourTree
                 throw new FormatException("Composite node without type attribute.");
             CompositeType compType = (CompositeType)Enum.Parse(typeof(CompositeType), typeAttr.Value);
             CompositeNode compNode = new CompositeNode(compType);
+            AddDecorators(compNode, xmlNode);
             AddChildNodes(compNode, xmlNode);
             return compNode;
         }
@@ -63,9 +66,53 @@ namespace BehaviourTree
                 throw new FormatException("Task node without class attribute.");
             Type compType = Type.GetType(classAttr.Value);
             Task task = (Task)Activator.CreateInstance(compType);
+            AddFields(task, xmlNode);
             TaskNode taskNode = new TaskNode(task);
             AddChildNodes(taskNode, xmlNode);
             return taskNode;
+        }
+
+        private void AddDecorators(CompositeNode compNode, XmlNode xmlNode)
+        {
+            XmlNode decoratorContainerNode = xmlNode.ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Decorators");
+            if (decoratorContainerNode == null)
+                return;
+
+            XmlNode[] decoratorNodes = decoratorContainerNode.ChildNodes.Cast<XmlNode>().Where(n => n.NodeType == XmlNodeType.Element).ToArray();
+            foreach (XmlNode decoratorNode in decoratorNodes)
+            {
+                var classAttr = decoratorNode.Attributes["class"];
+                if (classAttr == null)
+                    throw new FormatException("Decorator without class attribute.");
+                Type decoratorType = Type.GetType(classAttr.Value);
+                Decorator decorator = (Decorator)Activator.CreateInstance(decoratorType);
+                AddFields(decorator, decoratorNode);
+                compNode.decorators.Add(new DecoratorNode(decorator));
+            }
+        }
+
+        private void AddFields(object obj, XmlNode xmlNode)
+        {
+            XmlNode fieldContainerNode = xmlNode.ChildNodes.Cast<XmlNode>().FirstOrDefault(n => n.Name == "Fields");
+            if (fieldContainerNode == null)
+                return;
+
+            XmlNode[] fieldNodes = fieldContainerNode.ChildNodes.Cast<XmlNode>().Where(n => n.NodeType == XmlNodeType.Element).ToArray();
+
+            Dictionary<string, FieldInfo> fields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).ToDictionary(f => f.Name, f => f);
+            foreach (XmlNode fieldNode in fieldNodes)
+            {
+                if (fields.ContainsKey(fieldNode.Name))
+                {
+                    FieldInfo field = fields[fieldNode.Name];
+                    using (TextReader innerXmlReader = new StringReader(fieldNode.InnerXml))
+                    {
+                        XmlSerializer serializer = new XmlSerializer(field.FieldType);
+                        object deserialisedInnerNode = serializer.Deserialize(innerXmlReader);
+                        field.SetValue(obj, Convert.ChangeType(deserialisedInnerNode, field.FieldType));
+                    }
+                }
+            }
         }
 
         private void AddChildNodes(NodeBase node, XmlNode xmlNode)
