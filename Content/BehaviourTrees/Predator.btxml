@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Tree>
+  <Composite type="Sequence">
+    <Children>
+      <Task class="BehaviourTree.SlectTargetTask">
+        <Fields>
+          <targetTag>
+            <string>Prey</string>
+          </targetTag>
+          <targetBlackboardKey>
+            <string>Target</string>
+          </targetBlackboardKey>
+        </Fields>
+      </Task>
+      <Composite type="Sequence">
+        <Decorators>
+          <Decorator class="BehaviourTree.IsTargetValidDecorator">
+            <Fields>
+              <targetBlackboardKey>
+                <string>Target</string>
+              </targetBlackboardKey>
+              <InverseCondition>
+                <boolean>false</boolean>
+              </InverseCondition>
+            </Fields>
+          </Decorator>
+        </Decorators>
+        <Children>
+          <Task class="BehaviourTree.MoveToTargetTask">
+            <Fields>
+              <targetBlackboardKey>
+                <string>Target</string>
+              </targetBlackboardKey>
+              <movementSpeed>
+                <float>300</float>
+              </movementSpeed>
+            </Fields>
+          </Task>
+          <Task class="BehaviourTree.DestroyTargetTask">
+            <Fields>
+              <targetBlackboardKey>
+                <string>Target</string>
+              </targetBlackboardKey>
+            </Fields>
+          </Task>
+        </Children>
+      </Composite>
+    </Children>
+  </Composite>
+</Tree>

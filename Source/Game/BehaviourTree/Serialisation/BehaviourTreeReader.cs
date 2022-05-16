@@ -34,6 +34,8 @@ namespace BehaviourTree
                 behaviourTree.SetRootNode(rootNode);
             }
 
+            reader.Close();
+
             return behaviourTree;
         }
 

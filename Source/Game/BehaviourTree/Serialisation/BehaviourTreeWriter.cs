@@ -15,13 +15,14 @@ namespace BehaviourTree
             settings.Indent = true;
 
             StringBuilder stringBuilder = new StringBuilder();
-            XmlStringWriter stringWriter = new XmlStringWriter(stringBuilder, Encoding.UTF8); 
+            XmlStringWriter stringWriter = new XmlStringWriter(stringBuilder, Encoding.UTF8);
 
             System.Xml.XmlWriter writer = XmlWriter.Create(stringWriter, settings);
-            
+
             writer.WriteStartDocument();
             writer.WriteStartElement("Tree");
-            WriteNode(behaviourTree.GetRootNode(), writer);
+            if (behaviourTree.GetRootNode() != null)
+                WriteNode(behaviourTree.GetRootNode(), writer);
             writer.WriteEndElement();
             writer.WriteEndDocument();
             writer.Close();
@@ -60,7 +61,7 @@ namespace BehaviourTree
             Type taskType = task.GetType();
             writer.WriteStartElement("Task");
             writer.WriteAttributeString("class", taskType.FullName);
-            
+
             FieldInfo[] fields = taskType.GetFields(BindingFlags.Instance | BindingFlags.Public);
             WriteFields(task, writer);
             WriteChildNodes(node, writer);

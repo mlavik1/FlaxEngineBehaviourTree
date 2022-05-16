@@ -26,10 +26,13 @@ namespace BehaviourTree
         private NodeViewBase selectedNode;
         private RootNodeView rootNodeView;
         private List<NodeViewBase> nodes = new List<NodeViewBase>();
+        private string assetFilePath = "";
 
-        public BehaviourTreeEditorWindow(Editor editor)
+        public BehaviourTreeEditorWindow(Editor editor, string assetPath = "")
         : base(editor, true, ScrollBars.None)
         {
+            assetFilePath = assetPath;
+
             undo = new Undo();
             undo.UndoDone += OnUndoRedo;
             undo.RedoDone += OnUndoRedo;
@@ -55,13 +58,34 @@ namespace BehaviourTree
             propertiesEditor.Modified += OnPropertyEdited;
         }
 
+        public void LoadBehaviourTree(string filePath)
+        {
+            assetFilePath = filePath;
+            BehaviourTreeReader treeReader = new BehaviourTreeReader();
+            BehaviourTree behaviourTree = treeReader.ReadXml(filePath);
+            ClearNodeViews();
+            if (behaviourTree.GetRootNode() != null)
+                CreateNodeView(behaviourTree.GetRootNode(), rootNodeView);
+        }
+
+        public void NewBehaviourTree()
+        {
+            assetFilePath = "";
+            ClearNodeViews();
+        }
+
         public override void Update(float deltaTime)
         {
             base.Update(deltaTime);
 
             // Create root node view. Can't do this in constructor
             if (rootNodeView == null)
-                ClearNodeViews();
+            {
+                if (assetFilePath != "")
+                    LoadBehaviourTree(assetFilePath);
+                else
+                    NewBehaviourTree();
+            }
 
             Vector2 mousePos = canvasControl.PointFromScreen(Input.Mouse.Position);
 
@@ -283,16 +307,24 @@ namespace BehaviourTree
         {
             BehaviourTree behaviourTree = new BehaviourTree();
             behaviourTree.SetRootNode(rootNodeView.children[0].GetNode()); // TODO!
-            Debug.Log(behaviourTree.GetRootNode().GetChildren().Count);
 
-            string[] filenames;
-            FileSystem.ShowSaveFileDialog(null, "", "", false, "Save behaviour tree", out filenames);
-            if (filenames != null && filenames.Length > 0)
+            string fileName = assetFilePath;
+            if (fileName == "")
             {
+                string[] filenames;
+                FileSystem.ShowSaveFileDialog(null, "", "", false, "Save behaviour tree", out filenames);
+                if (filenames != null && filenames.Length > 0)
+                {
+                    fileName = filenames[0];
+                }
+            }
+
+            if (fileName != "")
+            {
+                Debug.Log(fileName);
                 BehaviourTreeWriter treeWriter = new BehaviourTreeWriter();
                 string xmlString = treeWriter.WriteXml(behaviourTree);
-                Debug.Log("XML: " + xmlString);
-                StreamWriter streamWriter = new StreamWriter(filenames[0]);
+                StreamWriter streamWriter = new StreamWriter(fileName);
                 streamWriter.Write(xmlString);
                 streamWriter.Flush();
                 streamWriter.Close();
@@ -305,10 +337,7 @@ namespace BehaviourTree
             FileSystem.ShowOpenFileDialog(null, "", "", false, "Save behaviour tree", out filenames);
             if (filenames != null && filenames.Length > 0)
             {
-                BehaviourTreeReader treeReader = new BehaviourTreeReader();
-                BehaviourTree behaviourTree = treeReader.ReadXml(filenames[0]);
-                ClearNodeViews();
-                CreateNodeView(behaviourTree.GetRootNode(), rootNodeView);
+                LoadBehaviourTree(filenames[0]);
             }
         }
 
