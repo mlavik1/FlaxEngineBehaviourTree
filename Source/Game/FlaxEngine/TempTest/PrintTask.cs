@@ -2,6 +2,7 @@
 
 namespace BehaviourTree
 {
+    [BTTask(name = "Print", description = "Prints text to the console.")]
     public class PrintTask : Task
     {
         public string StringToPrint = "test";

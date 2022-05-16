@@ -2,6 +2,7 @@
 
 namespace BehaviourTree
 {
+    [BTDecorator(name = "Is target valid?", description = "Checks if the target (set in the behaviour tree) is valid.")]
     public class IsTargetValidDecorator : Decorator
     {
         public string targetBlackboardKey;

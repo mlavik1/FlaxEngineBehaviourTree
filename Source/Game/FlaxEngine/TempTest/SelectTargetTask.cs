@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace BehaviourTree
 {
+    [BTTask(name = "Select target", description = "Select nearest target.")]
     public class SlectTargetTask : Task
     {
         public string targetTag = "Player";

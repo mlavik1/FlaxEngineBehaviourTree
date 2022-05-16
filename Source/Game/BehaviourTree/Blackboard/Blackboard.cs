@@ -11,6 +11,11 @@ namespace BehaviourTree
             blackboardData[key] = value;
         }
 
+        public void ClearValue<T>(string key, T value)
+        {
+            blackboardData.Remove(key);
+        }
+
         public bool GetValue<T>(string key, out T outValue)
         {
             if(blackboardData.ContainsKey(key))
@@ -29,6 +34,11 @@ namespace BehaviourTree
             T value;
             GetValue(key, out value);
             return value;
+        }
+
+        public bool IsValueSet(string key)
+        {
+            return blackboardData.ContainsKey(key);
         }
     }
 }

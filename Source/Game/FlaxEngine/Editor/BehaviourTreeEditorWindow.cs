@@ -86,6 +86,7 @@ namespace BehaviourTree
             }
             else if (Input.GetMouseButtonUp(MouseButton.Left) && movingNode != null)
             {
+                FinishMovingNode(movingNode);
                 movingNode = null;
             }
 
@@ -138,6 +139,28 @@ namespace BehaviourTree
                 }
             }
             return null;
+        }
+
+        private void FinishMovingNode(NodeViewBase nodeView)
+        {
+            if (nodeView != null && nodeView.parent?.GetNode() != null)
+            {
+                NodeViewBase parentNodeView = nodeView.parent;
+                int originalIndex = parentNodeView.children.IndexOf(nodeView);
+                int currIndex = originalIndex;
+                while (currIndex > 0 && parentNodeView.children[currIndex - 1].GetControl().Location.X > nodeView.GetControl().Location.X)
+                    currIndex--;
+                while (currIndex < parentNodeView.children.Count - 1 && parentNodeView.children[currIndex + 1].GetControl().Location.X < nodeView.GetControl().Location.X)
+                    currIndex++;
+
+                // Swap children
+                if (currIndex != originalIndex)
+                {
+                    parentNodeView.GetNode().SwapChildren(parentNodeView.children[originalIndex].GetNode(), parentNodeView.children[currIndex].GetNode());
+                    parentNodeView.children[originalIndex] = parentNodeView.children[currIndex];
+                    parentNodeView.children[currIndex] = nodeView;
+                }
+            }
         }
 
         private void ShowContextMenu(Vector2 mousePos)

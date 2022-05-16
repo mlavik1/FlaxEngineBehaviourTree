@@ -75,7 +75,7 @@ namespace BehaviourTree
                 // Handle overridden result
                 if (result == NodeExecutionResult.Aborted)
                     currNode.OnAbort(agent);
-                else if (result != NodeExecutionResult.InProgress)
+                if (result != NodeExecutionResult.InProgress)
                     currentChildIndex = -1;
 
                 return result;

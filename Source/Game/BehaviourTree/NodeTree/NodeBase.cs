@@ -28,6 +28,20 @@ namespace BehaviourTree
             parent = null;
         }
 
+        public void SwapChildren(NodeBase firstChild, NodeBase secondChild)
+        {
+            int i1 = children.IndexOf(firstChild);
+            int i2 = children.IndexOf(secondChild);
+            bool foundIndices = i1 != -1 && i2 != -1;
+            if (foundIndices)
+            {
+                children[i2] = firstChild;
+                children[i1] = secondChild;
+            }
+            else
+                System.Console.WriteLine("SwapChildren called with invalid nodes.");
+        }
+
         public IReadOnlyCollection<NodeBase> GetChildren()
         {
             return children.AsReadOnly();

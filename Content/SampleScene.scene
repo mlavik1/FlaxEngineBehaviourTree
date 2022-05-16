@@ -75,7 +75,6 @@
 			"ID": "6036126a474671e33ceafc8db62b5ec1",
 			"TypeName": "FlaxEngine.StaticModel",
 			"ParentID": "a78f623d476a01f61736e0990f8cd5aa",
-			"IsActive": false,
 			"Name": "Predator",
 			"Transform": {
 				"Translation": {

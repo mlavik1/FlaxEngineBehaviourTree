@@ -1,5 +1,6 @@
 ﻿using FlaxEngine;
 using FlaxEngine.GUI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -39,11 +40,13 @@ namespace BehaviourTree
             foreach (DecoratorNode decoratorNode in composite.decorators)
             {
                 Decorator decorator = decoratorNode.decorator;
+                BTDecoratorAttribute attr = (BTDecoratorAttribute)Attribute.GetCustomAttribute(decorator.GetType(), typeof(BTDecoratorAttribute));
+                string decoratorName = attr?.name != "" ? attr.name : decorator.GetType().Name;
                 string[] decoratorProps = decorator.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Select(f => $"{f.Name} = {f.GetValue(decorator)?.ToString()}").ToArray();
                 
                 VerticalPanel decoratorControl = nodeRoot.AddChild<VerticalPanel>();
                 decoratorControl.BackgroundColor = Color.Blue;
-                NodeContentView decoratorView = new NodeContentView(decoratorControl, decoratorNode.GetName(), decoratorProps);
+                NodeContentView decoratorView = new NodeContentView(decoratorControl, decoratorName, decoratorProps);
             }
 
             VerticalPanel compositeControl = nodeRoot.AddChild<VerticalPanel>();

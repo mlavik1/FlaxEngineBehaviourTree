@@ -2,6 +2,7 @@
 
 namespace BehaviourTree
 {
+    [BTTask(name = "Delay", description = "Wait for X seconds.")]
     public class DelayTask : Task
     {
         public float DelayInSeconds;

@@ -2,6 +2,7 @@
 
 namespace BehaviourTree
 {
+    [BTTask(name = "Move to target", description = "Move to target, and succeed when it has been reached.")]
     public class MoveToTargetTask : Task
     {
         public string targetBlackboardKey = "Target";

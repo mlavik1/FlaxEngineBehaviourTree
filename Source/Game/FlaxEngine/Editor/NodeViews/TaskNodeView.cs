@@ -2,6 +2,7 @@
 using FlaxEngine.GUI;
 using System.Reflection;
 using System.Linq;
+using System;
 
 namespace BehaviourTree
 {
@@ -38,8 +39,10 @@ namespace BehaviourTree
             containerControl.BackgroundColor = Color.Gray;
 
             Task task = taskNode.GetTask();
+            BTTaskAttribute attr = (BTTaskAttribute)Attribute.GetCustomAttribute(task.GetType(), typeof(BTTaskAttribute));
+            string taskName = attr?.name != "" ? attr.name : taskNode.GetTask().GetType().Name;
             string[] taskProps = task.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Select(f => $"{f.Name} = {f.GetValue(task).ToString()}").ToArray();
-            NodeContentView contentView = new NodeContentView(containerControl, taskNode.GetTask().GetType().Name, taskProps);
+            NodeContentView contentView = new NodeContentView(containerControl, taskName, taskProps);
         }
 
         public override ContainerControl GetControl()

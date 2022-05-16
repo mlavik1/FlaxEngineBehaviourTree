@@ -6,23 +6,21 @@ namespace BehaviourTree
 {
     public class VisualScriptingEditorPlugin : EditorPlugin
     {
-        private ToolStripButton _button;
+        private MainMenuButton mainMenuButton;
 
         public override void InitializeEditor()
         {
             base.InitializeEditor();
-
-            _button = Editor.UI.ToolStrip.AddButton("BEHAVIOUR TREE TEST");
-            //_button.Clicked += () => new BehaviourTreeEditorWindow().Show();
-            _button.Clicked += () => new BehaviourTreeEditorWindow(Editor).Show();
+            mainMenuButton = Editor.UI.MainMenu.AddButton("Behaviour tree");
+            mainMenuButton.ContextMenu.AddButton("Show behaviour tree editor").Clicked += () => new BehaviourTreeEditorWindow(Editor).Show();
         }
 
         public override void Deinitialize()
         {
-            if (_button != null)
+            if (mainMenuButton != null)
             {
-                _button.Dispose();
-                _button = null;
+                mainMenuButton.Dispose();
+                mainMenuButton = null;
             }
 
             base.Deinitialize();

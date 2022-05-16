@@ -2,6 +2,7 @@
 
 namespace BehaviourTree
 {
+    [BTTask(name = "Destroy target", description = "Destroyes the target, set in the blackboard.")]
     public class DestroyTargetTask : Task
     {
         public string targetBlackboardKey = "Target";

@@ -15,7 +15,8 @@ namespace BehaviourTree
             NodeViewBase nodeView = Values[0] as NodeViewBase;
             Type nodeType = nodeView.GetType();
 
-            layout.Label(nodeType.Name, TextAlignment.Near);
+            layout.Header(nodeType.Name);
+            layout.Space(10.0f);
 
             // Composite node
             if (nodeType == typeof(CompositeNodeView))
@@ -51,6 +52,8 @@ namespace BehaviourTree
                 TaskNodeView taskNodeView = (TaskNodeView)nodeView;
                 TaskNode taskNode = (TaskNode)taskNodeView.GetNode();
                 Task task = taskNode.GetTask();
+                var taskGroup = layout.Group(task.GetType().Name);
+
                 FieldInfo[] fields = task.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public);
                 foreach (FieldInfo field in fields)
                 {
@@ -63,7 +66,7 @@ namespace BehaviourTree
                         taskNodeView.RebuildGUI();
                     };
                     ValueContainer valueContainer = new CustomValueContainer(scriptType, fieldValue, fieldGetter, fieldSetter);
-                    layout.Object(field.Name, valueContainer, null);
+                    taskGroup.Object(field.Name, valueContainer, null);
                 }
             }
         }
