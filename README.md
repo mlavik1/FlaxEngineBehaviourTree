@@ -14,4 +14,4 @@ Behaviour tree system and editor, for Flax Engine.
 4. Add an "AI Controller" script to the object you want to be controlled by the behaviour tree.
 5. Assign the behaviour tree in the "Behaviour Tree" field.
 
-<img src="Screenshots/bt-editor.jpg" width="500px">
+<img src="RepoMedia/bt-editor.jpg" width="500px">
